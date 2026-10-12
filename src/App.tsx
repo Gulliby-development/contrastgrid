@@ -1,18 +1,19 @@
 import { useMemo, useState } from "react";
 import { formatRatio } from "./contrast";
 import { toCssVariables } from "./css";
-import { buildGrid, parseInput } from "./grid";
+import { buildGrid, formatPairSummary, parseInput, summarizePairs } from "./grid";
 
 const DEFAULT_COLORS = `white: #ffffff
 ink: #111827
 brand: #2563eb
 gray: #767676`;
 
-export default function App() {
-  const [input, setInput] = useState(DEFAULT_COLORS);
+export default function App({ initialInput = DEFAULT_COLORS }: { initialInput?: string } = {}) {
+  const [input, setInput] = useState(initialInput);
   const [copied, setCopied] = useState(false);
   const { colors, errors } = useMemo(() => parseInput(input), [input]);
   const grid = useMemo(() => buildGrid(colors), [colors]);
+  const pairSummary = useMemo(() => summarizePairs(colors), [colors]);
 
   async function copyCssVariables() {
     await navigator.clipboard.writeText(toCssVariables(colors));
@@ -85,6 +86,11 @@ export default function App() {
               {copied ? "Copied" : "Copy CSS variables"}
             </button>
           </div>
+          {colors.length >= 2 && (
+            <p className="pair-summary" data-testid="pair-summary">
+              {formatPairSummary(pairSummary)}
+            </p>
+          )}
           {colors.length === 0 ? (
             <div className="empty-state">
               <span className="empty-icon" aria-hidden="true">

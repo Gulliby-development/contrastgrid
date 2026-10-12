@@ -20,6 +20,40 @@ export interface GridCell {
   diagonal: boolean;
 }
 
+export interface PairSummary {
+  total: number;
+  aa: number;
+  aaLargeOnly: number;
+  fail: number;
+}
+
+export function summarizePairs(colors: NamedColor[]): PairSummary {
+  const summary: PairSummary = {
+    total: (colors.length * (colors.length - 1)) / 2,
+    aa: 0,
+    aaLargeOnly: 0,
+    fail: 0,
+  };
+
+  for (let firstIndex = 0; firstIndex < colors.length; firstIndex += 1) {
+    for (let secondIndex = firstIndex + 1; secondIndex < colors.length; secondIndex += 1) {
+      const ratio = contrastRatio(colors[firstIndex].color, colors[secondIndex].color);
+      const pairRatings = ratings(ratio);
+
+      if (pairRatings.aa) summary.aa += 1;
+      else if (pairRatings.aaLarge) summary.aaLargeOnly += 1;
+      else summary.fail += 1;
+    }
+  }
+
+  return summary;
+}
+
+export function formatPairSummary(summary: PairSummary): string {
+  const pairLabel = summary.total === 1 ? "pair" : "pairs";
+  return `${summary.total} ${pairLabel}: ${summary.aa} pass AA, ${summary.aaLargeOnly} pass AA large only, ${summary.fail} fail`;
+}
+
 export function parseInput(text: string): ParseInputResult {
   const colors: NamedColor[] = [];
   const errors: string[] = [];
