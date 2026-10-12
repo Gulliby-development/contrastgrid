@@ -1,6 +1,6 @@
 import { describe, expect, test } from "bun:test";
 import { toCssVariables } from "../src/css";
-import { buildGrid, parseInput } from "../src/grid";
+import { buildGrid, formatPairSummary, parseInput, summarizePairs } from "../src/grid";
 
 const defaultInput = `white: #ffffff
 ink: #111827
@@ -34,6 +34,49 @@ ink: #111827`);
 
     expect(result.colors).toHaveLength(0);
     expect(result.errors).toEqual(['Line 1: unrecognized color "Accent: #fff"']);
+  });
+});
+
+describe("summarizePairs", () => {
+  test("counts and formats the default palette's unordered pairs", () => {
+    const summary = summarizePairs(parseInput(defaultInput).colors);
+
+    expect(summary).toEqual({ total: 6, aa: 3, aaLargeOnly: 2, fail: 1 });
+    expect(formatPairSummary(summary)).toBe("6 pairs: 3 pass AA, 2 pass AA large only, 1 fail");
+  });
+
+  test("counts black and white as one AA-passing pair", () => {
+    const colors = parseInput("black: #000000\nwhite: #ffffff").colors;
+
+    expect(formatPairSummary(summarizePairs(colors))).toBe(
+      "1 pair: 1 pass AA, 0 pass AA large only, 0 fail",
+    );
+  });
+
+  test("counts duplicate colors as a failing pair", () => {
+    const colors = parseInput("first: #336699\nsecond: #336699").colors;
+
+    expect(formatPairSummary(summarizePairs(colors))).toBe(
+      "1 pair: 0 pass AA, 0 pass AA large only, 1 fail",
+    );
+  });
+
+  test("classifies the existing AA and AA-large thresholds", () => {
+    const aaColors = parseInput("white: #ffffff\ngray: #767676").colors;
+    const aaLargeColors = parseInput("white: #ffffff\ngray: #777777").colors;
+
+    expect(formatPairSummary(summarizePairs(aaColors))).toBe(
+      "1 pair: 1 pass AA, 0 pass AA large only, 0 fail",
+    );
+    expect(formatPairSummary(summarizePairs(aaLargeColors))).toBe(
+      "1 pair: 0 pass AA, 1 pass AA large only, 0 fail",
+    );
+  });
+
+  test("formats an empty palette with plural pairs", () => {
+    expect(formatPairSummary(summarizePairs([]))).toBe(
+      "0 pairs: 0 pass AA, 0 pass AA large only, 0 fail",
+    );
   });
 });
 

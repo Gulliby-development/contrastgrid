@@ -26,7 +26,7 @@ brand: #2563eb
 gray: #767676
 ```
 
-Edit the **Colors** field to replace the list. The matrix uses each color as text against every color as a background; diagonal comparisons are shown as `-`. Invalid lines and duplicate names are reported below the field while valid colors remain in the matrix. Use **Copy CSS variables** to copy variables for the valid colors.
+Edit the **Colors** field to replace the list. The matrix uses each color as text against every color as a background; diagonal comparisons are shown as `-`. A pair summary above the matrix shows the contrast tally; the default palette displays `6 pairs: 3 pass AA, 2 pass AA large only, 1 fail`. Invalid lines and duplicate names are reported below the field while valid colors remain in the matrix. Use **Copy CSS variables** to copy variables for the valid colors.
 
 ## Accepted input
 
