@@ -35,10 +35,11 @@ Enter one color per line. A name is optional and precedes the first colon:
 ```text
 Brand Blue: #2563eb
 ink: rgb(17, 24, 39)
+sky: hsl(210, 50%, 40%)
 #767676
 ```
 
-Supported formats are `#rgb`, `#rrggbb` (case-insensitive), and `rgb(r, g, b)` with integer channels from 0 to 255. The `rgb` keyword is case-insensitive; spaces around numbers and commas are optional. Blank lines are ignored. Unnamed colors use their lowercase hex value as their name. Names are compared case-insensitively, and later duplicates are ignored with an error message.
+Supported formats are `#rgb`, `#rrggbb` (case-insensitive), `rgb(r, g, b)` with integer channels from 0 to 255, and `hsl(h, s%, l%)` with an integer hue from 0 to 360 (360 is the same as 0) and integer saturation and lightness from 0% to 100%, each with its `%` sign directly after the number. The `rgb` and `hsl` keywords are case-insensitive; spaces around numbers and commas are optional. `hsl` is converted to RGB with exact integer arithmetic, rounding half up per channel, so `hsl(0, 100%, 95%)` is `#ffe6e6`; `hsla()`, decimals, units such as `deg`, and space-separated forms are not recognized. Blank lines are ignored. Unnamed colors use their lowercase hex value as their name. Names are compared case-insensitively, and later duplicates are ignored with an error message.
 
 ## WCAG ratings
 

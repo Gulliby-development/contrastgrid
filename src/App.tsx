@@ -59,7 +59,8 @@ export default function App({ initialInput = DEFAULT_COLORS }: { initialInput?: 
             aria-describedby="input-hint"
           />
           <p className="input-hint" id="input-hint">
-            One color per line. Add an optional name before a colon.
+            One color per line. Add an optional name before a colon. Formats: #rgb, #rrggbb, rgb(r,
+            g, b) and hsl(h, s%, l%).
           </p>
           {errors.length > 0 && (
             <ul className="input-errors" aria-label="Input errors">

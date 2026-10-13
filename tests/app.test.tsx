@@ -10,6 +10,7 @@ describe("default application rendering", () => {
     expect(html).toContain('data-pass="true"');
     expect(html).toContain('data-pass="false"');
     expect(html).toContain("matrix-scroll");
+    expect(html).toContain("Formats: #rgb, #rrggbb, rgb(r, g, b) and hsl(h, s%, l%).");
   });
 
   test("renders the default pair summary between the heading and matrix", () => {
