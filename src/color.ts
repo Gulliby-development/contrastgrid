@@ -25,14 +25,57 @@ export function parseColor(text: string): Color | undefined {
   }
 
   const rgb = /^rgb\s*\(\s*(\d+)\s*,\s*(\d+)\s*,\s*(\d+)\s*\)$/i.exec(value);
-  if (!rgb) return undefined;
+  if (rgb) {
+    const channels = rgb.slice(1).map(Number);
+    if (channels.some((channel) => channel < 0 || channel > 255)) {
+      return undefined;
+    }
 
-  const channels = rgb.slice(1).map(Number);
-  if (channels.some((channel) => channel < 0 || channel > 255)) {
-    return undefined;
+    return { r: channels[0], g: channels[1], b: channels[2] };
   }
 
-  return { r: channels[0], g: channels[1], b: channels[2] };
+  const hsl = /^hsl\s*\(\s*(\d+)\s*,\s*(\d+)%\s*,\s*(\d+)%\s*\)$/i.exec(value);
+  if (!hsl) return undefined;
+
+  const [hue, saturation, lightness] = hsl.slice(1).map(Number);
+  if (hue > 360 || saturation > 100 || lightness > 100) return undefined;
+
+  return hslToRgb(hue, saturation, lightness);
+}
+
+function hslToRgb(hue: number, saturation: number, lightness: number): Color {
+  const chroma = (100 - Math.abs(2 * lightness - 100)) * saturation;
+  const low = 30 * (200 * lightness - chroma);
+  const high = 30 * (chroma + 200 * lightness);
+  const hueWithinSector = (hue % 120) - 60;
+  const middle = chroma * (60 - Math.abs(hueWithinSector)) + low;
+  const sector = Math.floor((hue % 360) / 60);
+
+  let numerators: [number, number, number];
+  switch (sector) {
+    case 0:
+      numerators = [high, middle, low];
+      break;
+    case 1:
+      numerators = [middle, high, low];
+      break;
+    case 2:
+      numerators = [low, high, middle];
+      break;
+    case 3:
+      numerators = [low, middle, high];
+      break;
+    case 4:
+      numerators = [middle, low, high];
+      break;
+    default:
+      numerators = [high, low, middle];
+      break;
+  }
+
+  const channel = (numerator: number) => Math.floor((numerator * 255 * 2 + 600000) / 1200000);
+  const [r, g, b] = numerators.map(channel);
+  return { r, g, b };
 }
 
 export function toHex(color: Color): string {
