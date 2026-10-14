@@ -24,7 +24,9 @@ export function parseColor(text: string): Color | undefined {
     };
   }
 
-  const rgb = /^rgb\s*\(\s*(\d+)\s*,\s*(\d+)\s*,\s*(\d+)\s*\)$/i.exec(value);
+  const rgb =
+    /^rgb\s*\(\s*(\d+)\s*,\s*(\d+)\s*,\s*(\d+)\s*\)$/i.exec(value) ??
+    /^rgb\s*\(\s*(\d+)[ \t]+(\d+)[ \t]+(\d+)\s*\)$/i.exec(value);
   if (rgb) {
     const channels = rgb.slice(1).map(Number);
     if (channels.some((channel) => channel < 0 || channel > 255)) {
@@ -34,7 +36,9 @@ export function parseColor(text: string): Color | undefined {
     return { r: channels[0], g: channels[1], b: channels[2] };
   }
 
-  const hsl = /^hsl\s*\(\s*(\d+)\s*,\s*(\d+)%\s*,\s*(\d+)%\s*\)$/i.exec(value);
+  const hsl =
+    /^hsl\s*\(\s*(\d+)\s*,\s*(\d+)%\s*,\s*(\d+)%\s*\)$/i.exec(value) ??
+    /^hsl\s*\(\s*(\d+)[ \t]+(\d+)%[ \t]+(\d+)%\s*\)$/i.exec(value);
   if (!hsl) return undefined;
 
   const [hue, saturation, lightness] = hsl.slice(1).map(Number);
